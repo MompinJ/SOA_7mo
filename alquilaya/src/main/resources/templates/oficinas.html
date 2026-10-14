@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragmentos :: head('Oficinas')}"></head>
+
+<body>
+    <nav th:replace="~{fragmentos :: nav('oficinas')}"></nav>
+
+    <main>
+        <h1>Oficinas</h1>
+
+        <div th:replace="~{fragmentos :: mensajes}"></div>
+
+        <div class="columnas">
+            <div class="caja">
+                <h2 th:text="${oficina.idOficina == null} ? 'Nueva oficina' : 'Editar oficina #' + ${oficina.idOficina}">Nueva oficina</h2>
+                <form th:action="${oficina.idOficina == null} ? @{/oficinas/guardar} : @{/oficinas/{id}/actualizar(id=${oficina.idOficina})}" method="post">
+                    <div class="campo">
+                        <label for="nombre">Nombre</label>
+                        <input type="text" id="nombre" name="nombre" th:value="${oficina.nombre}" placeholder="sucursal centro" required>
+                    </div>
+                    <div class="campo">
+                        <label for="direccion">Direccion</label>
+                        <input type="text" id="direccion" name="direccion" th:value="${oficina.direccion}" required>
+                    </div>
+                    <div class="dos">
+                        <div class="campo">
+                            <label for="ciudad">Ciudad</label>
+                            <input type="text" id="ciudad" name="ciudad" th:value="${oficina.ciudad}" required>
+                        </div>
+                        <div class="campo">
+                            <label for="region">Region</label>
+                            <input type="text" id="region" name="region" th:value="${oficina.region}" required>
+                        </div>
+                    </div>
+                    <button type="submit" class="boton" th:text="${oficina.idOficina == null} ? 'Guardar oficina' : 'Guardar cambios'">Guardar oficina</button>
+                    <a class="cancelar" th:if="${oficina.idOficina != null}" th:href="@{/oficinas}">Cancelar</a>
+                </form>
+            </div>
+
+            <div class="caja tabla">
+                <h2 th:text="'Registradas (' + ${#lists.size(oficinas)} + ')'">Registradas</h2>
+                <div class="vacio" th:if="${#lists.isEmpty(oficinas)}">Todavia no hay oficinas.</div>
+                <table th:unless="${#lists.isEmpty(oficinas)}">
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Direccion</th>
+                        <th>Ciudad</th>
+                        <th>Region</th>
+                        <th></th>
+                    </tr>
+                    <tr th:each="o : ${oficinas}" th:classappend="${o.idOficina == oficina.idOficina} ? 'editando'">
+                        <td th:text="${o.nombre}"></td>
+                        <td th:text="${o.direccion}"></td>
+                        <td th:text="${o.ciudad}"></td>
+                        <td th:text="${o.region}"></td>
+                        <td class="acciones">
+                            <a class="boton-chico" th:href="@{/oficinas/{id}/editar(id=${o.idOficina})}">Editar</a>
+                            <form th:action="@{/oficinas/{id}/eliminar(id=${o.idOficina})}" method="post">
+                                <button type="submit" class="boton-chico">Borrar</button>
+                            </form>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </main>
+</body>
+
+</html>

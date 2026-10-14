@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:fragment="head(titulo)">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${titulo} + ' - AlquilaYa'">AlquilaYa</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/estilos.css}">
+</head>
+
+<body>
+
+    <nav th:fragment="nav(activo)">
+        <div class="marca">ALQUILA<span>YA</span></div>
+        <ul>
+            <li><a th:href="@{/vehiculos}" th:classappend="${activo == 'vehiculos'} ? 'activo'">VEHICULOS</a></li>
+            <li><a th:href="@{/alquileres}" th:classappend="${activo == 'alquileres'} ? 'activo'">ALQUILERES</a></li>
+            <li><a th:href="@{/clientes}" th:classappend="${activo == 'clientes'} ? 'activo'">CLIENTES</a></li>
+            <li><a th:href="@{/oficinas}" th:classappend="${activo == 'oficinas'} ? 'activo'">OFICINAS</a></li>
+        </ul>
+    </nav>
+
+    <div th:fragment="mensajes">
+        <div class="mensaje error" th:if="${error}" th:text="${error}"></div>
+        <div class="mensaje ok" th:if="${ok}" th:text="${ok}"></div>
+    </div>
+
+</body>
+
+</html>

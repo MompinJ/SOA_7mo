@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragmentos :: head('Alquileres')}"></head>
+
+<body>
+    <nav th:replace="~{fragmentos :: nav('alquileres')}"></nav>
+
+    <main>
+        <h1>Alquileres</h1>
+
+        <div th:replace="~{fragmentos :: mensajes}"></div>
+
+        <div class="columnas">
+            <div class="caja">
+                <h2 th:text="${alquiler.idAlquiler == null} ? 'Nuevo alquiler' : 'Editar alquiler #' + ${alquiler.idAlquiler}">Nuevo alquiler</h2>
+                <form th:action="${alquiler.idAlquiler == null} ? @{/alquileres/guardar} : @{/alquileres/{id}/actualizar(id=${alquiler.idAlquiler})}" method="post">
+
+                    <div th:if="${alquiler.idAlquiler == null}">
+                        <div class="campo">
+                            <label for="vehiculo">Vehiculo</label>
+                            <select id="vehiculo" name="vehiculo.idVehiculo" required>
+                                <option value="">-- elige uno --</option>
+                                <option th:each="v : ${disponibles}" th:value="${v.idVehiculo}"
+                                    th:text="${v.matricula} + ' / ' + ${v.marca} + ' ' + ${v.modelo} + ' ($' + ${v.tarifaDiaria} + ')'"></option>
+                            </select>
+                        </div>
+                        <div class="campo">
+                            <label for="cliente">Cliente</label>
+                            <select id="cliente" name="cliente.idCliente" required>
+                                <option value="">-- elige uno --</option>
+                                <option th:each="c : ${clientes}" th:value="${c.idCliente}" th:text="${c.nombre} + ' ' + ${c.apellido}"></option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div th:if="${alquiler.idAlquiler != null}">
+                        <div class="campo">
+                            <label>Vehiculo</label>
+                            <div class="fijo" th:text="${alquiler.vehiculo.matricula} + ' / ' + ${alquiler.vehiculo.marca} + ' ' + ${alquiler.vehiculo.modelo}"></div>
+                        </div>
+                        <div class="campo">
+                            <label>Cliente</label>
+                            <div class="fijo" th:text="${alquiler.cliente.nombre} + ' ' + ${alquiler.cliente.apellido}"></div>
+                        </div>
+                    </div>
+
+                    <div class="dos">
+                        <div class="campo">
+                            <label for="fechaAlquiler">Desde</label>
+                            <input type="date" id="fechaAlquiler" name="fechaAlquiler" th:value="${alquiler.fechaAlquiler}" required>
+                        </div>
+                        <div class="campo">
+                            <label for="fechaDevolucion">Hasta</label>
+                            <input type="date" id="fechaDevolucion" name="fechaDevolucion" th:value="${alquiler.fechaDevolucion}" required>
+                        </div>
+                    </div>
+                    <div class="campo">
+                        <label for="precioTotal">Precio total</label>
+                        <input type="number" id="precioTotal" name="precioTotal" th:value="${alquiler.precioTotal}" step="0.01" min="1" placeholder="1950" required>
+                    </div>
+                    <button type="submit" class="boton" th:text="${alquiler.idAlquiler == null} ? 'Registrar alquiler' : 'Guardar cambios'">Registrar alquiler</button>
+                    <a class="cancelar" th:if="${alquiler.idAlquiler != null}" th:href="@{/alquileres}">Cancelar</a>
+                </form>
+            </div>
+
+            <div class="caja tabla">
+                <h2 th:text="'Activos (' + ${#lists.size(alquileres)} + ')'">Activos</h2>
+                <div class="vacio" th:if="${#lists.isEmpty(alquileres)}">No hay alquileres registrados.</div>
+                <table th:unless="${#lists.isEmpty(alquileres)}">
+                    <tr>
+                        <th>#</th>
+                        <th>Vehiculo</th>
+                        <th>Cliente</th>
+                        <th>Fechas</th>
+                        <th>Total</th>
+                        <th></th>
+                    </tr>
+                    <tr th:each="a : ${alquileres}" th:classappend="${a.idAlquiler == alquiler.idAlquiler} ? 'editando'">
+                        <td class="mono" th:text="${a.idAlquiler}"></td>
+                        <td>
+                            <span th:text="${a.vehiculo.marca} + ' ' + ${a.vehiculo.modelo}"></span><br>
+                            <span class="etiqueta" th:text="${a.vehiculo.matricula}"></span>
+                        </td>
+                        <td th:text="${a.cliente.nombre} + ' ' + ${a.cliente.apellido}"></td>
+                        <td class="mono" th:text="${a.fechaAlquiler} + ' a ' + ${a.fechaDevolucion}"></td>
+                        <td class="mono" th:text="'$' + ${a.precioTotal}"></td>
+                        <td class="acciones">
+                            <a class="boton-chico" th:href="@{/alquileres/{id}/editar(id=${a.idAlquiler})}">Editar</a>
+                            <form th:action="@{/alquileres/{id}/devolver(id=${a.idAlquiler})}" method="post">
+                                <button type="submit" class="boton-chico">Devolver</button>
+                            </form>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </main>
+</body>
+
+</html>
